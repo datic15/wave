@@ -121,7 +121,7 @@ export default class Settings extends React.Component {
       this.setState({popoverOpened: true, anchorEl: event.currentTarget});
     }
 
-    return this.state.popoverOpened;  
+    return this.state.popoverOpened;
   }
 
   handleReportsClick = () => {
@@ -135,13 +135,13 @@ export default class Settings extends React.Component {
     win.document.body.innerHTML += `<div><img src="${CanvasService.getCanvas().toDataURL("image/png")}" width="950" height="650" /></div> <br />`;
     win.document.body.innerHTML += `<div align='center'><img src="${this.myLineChart.toBase64Image()}" width="400" height="400" /></div>`;
     win.window.print();
-    // win.window.close();    
+    // win.window.close();
   }
 
   getIterations() {
     let waIterations = [],
         bwaIterations = [];
-    
+
     waIterations.push(
       this.waResult
         .map(route => route.length - 1)
@@ -150,7 +150,7 @@ export default class Settings extends React.Component {
           return sum + current;
         }, 0)
     );
-    
+
     bwaIterations.push(
       Math.ceil(this.bwaResult
         .map(route => route.length - 1)
@@ -255,7 +255,7 @@ export default class Settings extends React.Component {
     }
 
 
-    // return this.state.chartPopoverOpened;  
+    // return this.state.chartPopoverOpened;
   }
 
   renderCanvasVerticeNames = (labelText, labelValue, selectChangeHandler) => {
@@ -370,16 +370,7 @@ export default class Settings extends React.Component {
           <Menu>
             {this.renderPaths()}
           </Menu>
-        </Popover>
-
-        <RaisedButton
-          onTouchTap={this.handleReportsClick}
-          className="custom-btn-default"
-          disabled={this.state.isRoutesButtonDisabled}
-          primary={true}
-          label="Render Report"
-        />
-
+        </Popover>       
 
         <RaisedButton
           onTouchTap={this.handleChartClick}
@@ -387,6 +378,14 @@ export default class Settings extends React.Component {
           disabled={this.state.isRoutesButtonDisabled}
           primary={true}
           label="Show Chart"
+        />
+
+        <RaisedButton
+          onTouchTap={this.handleReportsClick}
+          className="custom-btn-default"
+          disabled={this.state.isRoutesButtonDisabled}
+          primary={true}
+          label="Render Report"
         />
 
 
