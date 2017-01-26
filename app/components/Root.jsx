@@ -12,7 +12,7 @@ import Store from "../store/Store";
 
 const store = new Store();
 
-// const AppWrapper = () => { 
+// const AppWrapper = () => {
 //   return (
 //     <div>
 //       <Home firebase={firebase}/>
@@ -24,7 +24,7 @@ const Root = () => (
   <Provider store={store}>
     <MuiThemeProvider>
       <Router history={browserHistory}>
-        <Route path="/" component={App}>
+        <Route path="wave/" component={App}>
           <IndexRoute component={Home}/>
           <Route path="charts/" component={Charts}/>
           <Route path="reports/" component={Reports}/>
