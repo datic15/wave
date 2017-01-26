@@ -42,11 +42,12 @@ export default class BackwaveAlgorithmService {
     });
   }
 
-  setStartingRoutes(startingRouteIndex, path) {
+  setStartingRoutes(startingRouteIndex, path, isWeight) {
     this.matrix[startingRouteIndex].forEach((item, index) => {
       if(item) {
         let { weight } = item;
 
+if(!isWeight){
         path.push([{
           name: `A${startingRouteIndex + 1}`,
           weight: 0,
@@ -56,6 +57,18 @@ export default class BackwaveAlgorithmService {
           weight,
           index
         }]);
+      }
+        else {
+          path.push([{
+            name: `A${startingRouteIndex + 1}`,
+            weight: 1,
+            index: startingRouteIndex
+          }, {
+            name: "A" + (index + 1),// `A${index + 1}`,
+            weight,
+            index
+          }]);
+        }
       }
     });
   }
@@ -69,13 +82,13 @@ export default class BackwaveAlgorithmService {
 
     vertexCollection = tempPathCollection
       .sort((prevPath, nextPath) => {
-        let { linksCount: prevPathLinksCount } = prevPath[prevPath.length - 1],         
+        let { linksCount: prevPathLinksCount } = prevPath[prevPath.length - 1],
             { linksCount: nextPathLinksCount } = nextPath[nextPath.length - 1];
 
         return prevPathLinksCount - nextPathLinksCount;
       })
       .filter((currentPath, index) => {
-        if(!index) firstPathLinksCount = currentPath[currentPath.length - 1].linksCount;           
+        if(!index) firstPathLinksCount = currentPath[currentPath.length - 1].linksCount;
 
         let { linksCount: currentPathLinksCount } = currentPath[currentPath.length - 1];
 
@@ -83,16 +96,16 @@ export default class BackwaveAlgorithmService {
       });
 
     if(vertexCollection.length == 1) return vertexCollection[0];
-      
+
     vertexCollection = vertexCollection
       .sort((prevPath, nextPath) => {
-        let { weight: prevPathWeight } = prevPath[prevPath.length - 1],         
+        let { weight: prevPathWeight } = prevPath[prevPath.length - 1],
             { weight: nextPathWeight } = nextPath[nextPath.length - 1];
 
         return prevPathWeight - nextPathWeight;
       })
       .filter((currentPath, index) => {
-        if(!index) firstPathWeight = currentPath[currentPath.length - 1].weight;           
+        if(!index) firstPathWeight = currentPath[currentPath.length - 1].weight;
 
         let { weight: currentPathWeight } = currentPath[currentPath.length - 1];
 
@@ -103,7 +116,7 @@ export default class BackwaveAlgorithmService {
 
     return vertexCollection
       .sort((prevPath, nextPath) => {
-        let { index: prevPathIndex } = prevPath[prevPath.length - 1],         
+        let { index: prevPathIndex } = prevPath[prevPath.length - 1],
             { index: nextPathIndex } = nextPath[nextPath.length - 1];
 
         return prevPathIndex - nextPathIndex;
@@ -115,8 +128,8 @@ export default class BackwaveAlgorithmService {
       let lastIndex = currentPath.length - 1,
           { index } = currentPath[lastIndex];
 
-      // tempPath[i][currentPath.length - 1].linksCount 
-      currentPath[lastIndex].linksCount = this.matrix[index].filter((rowItem) => !!rowItem).length; 
+      // tempPath[i][currentPath.length - 1].linksCount
+      currentPath[lastIndex].linksCount = this.matrix[index].filter((rowItem) => !!rowItem).length;
 
       return currentPath;
     });
@@ -126,8 +139,8 @@ export default class BackwaveAlgorithmService {
 
     this.resetVertexColumn(this.startVertex);
     this.resetVertexColumn(this.finishVertex);
-    this.setStartingRoutes(this.startVertex, this.path1);
-    this.setStartingRoutes(this.finishVertex, this.path2);
+    this.setStartingRoutes(this.startVertex, this.path1, 0);
+    this.setStartingRoutes(this.finishVertex, this.path2, 1);
     this.resetStartingRoutesColumns(this.startVertex);
     this.resetStartingRoutesColumns(this.finishVertex);
 
@@ -161,6 +174,7 @@ export default class BackwaveAlgorithmService {
         //       }
         //     }
         //   });
+        debugger;
         this.matrixCopy1[nextVertexPath[nextVertexPath.length - 1].index]
           .forEach((rowItem, index) => {
             if(rowItem) {
@@ -180,7 +194,7 @@ export default class BackwaveAlgorithmService {
             }
           });
 
-        
+
         if(!nextVertex) {
           nextVertex = this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
             .map((rowItem, index) => {
@@ -215,7 +229,7 @@ export default class BackwaveAlgorithmService {
 
 
         tempPath = tempPath.filter((currentPath, index) => {
-          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;  
+          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;
         });
 
 
@@ -241,7 +255,7 @@ export default class BackwaveAlgorithmService {
                 }
               });
 
-              this.resetVertexColumn(nextVertex.index); 
+              this.resetVertexColumn(nextVertex.index);
               this.matrixCopy1.forEach((item) => {
                 item[nextVertex.index] = null;
               });
@@ -249,7 +263,7 @@ export default class BackwaveAlgorithmService {
           });
 
 
-          // if(nextVertex.index != this.finishVertex) this.resetVertexColumn(nextVertex.index); 
+          // if(nextVertex.index != this.finishVertex) this.resetVertexColumn(nextVertex.index);
         }
         else {
           this.path1.forEach((currentPath, index) => {
@@ -259,7 +273,7 @@ export default class BackwaveAlgorithmService {
           });
         }
 
-        
+
         // break;
       }
 
@@ -301,7 +315,7 @@ export default class BackwaveAlgorithmService {
             }
           });
 
-        
+
         if(!nextVertex) {
           nextVertex = this.matrix[nextVertexPath[nextVertexPath.length - 1].index]
             .map((rowItem, index) => {
@@ -336,7 +350,7 @@ export default class BackwaveAlgorithmService {
 
 
         tempPath = tempPath.filter((currentPath, index) => {
-          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;  
+          return currentPath[currentPath.length - 1].index != nextVertexPath[nextVertexPath.length - 1].index;
         });
 
 
@@ -366,11 +380,11 @@ export default class BackwaveAlgorithmService {
               this.resetVertexColumn(nextVertex.index);
               this.matrixCopy.forEach((item) => {
                 item[nextVertex.index] = null;
-              }); 
+              });
             }
           });
 
-          // if(nextVertex.index != this.finishVertex) this.resetVertexColumn(nextVertex.index); 
+          // if(nextVertex.index != this.finishVertex) this.resetVertexColumn(nextVertex.index);
         }
         else {
           this.path2.forEach((currentPath, index) => {
@@ -395,7 +409,7 @@ export default class BackwaveAlgorithmService {
           return path && !path.hasOwnProperty("isFinished");
         })
         .length;
-      
+
       // isAlgorithmNotFinished = false;
       // console.log(this.path1);
       // console.log(this.path2);
@@ -407,7 +421,7 @@ export default class BackwaveAlgorithmService {
     console.log(this.path2);
     // console.log(this.matrix);
     console.log(this.concatRoutes());
-    
+
     return this.concatRoutes();
   }
 
@@ -424,9 +438,9 @@ export default class BackwaveAlgorithmService {
 
       if(linkedRoute) {
         let fullRoute = _.cloneDeep(path1CurrentRoute);
-        
+
         fullRoute[fullRoute.length - 1].isCenter = true;
-        
+
         for(let i = linkedRoute.length - 2; i >= 0; i--) {
           fullRoute.push(linkedRoute[i]);
         }
@@ -447,11 +461,11 @@ export default class BackwaveAlgorithmService {
           routePath2 = routePath2.reverse();
 
           for (let vrtxIndex in routePath2) {
-            console.log("FROM: ", routePath1[vertexIndex].name, " TO: ", routePath2[vrtxIndex].name); 
-            
-            if (routePath1[vertexIndex] 
-              && routePath1[vertexIndex].index 
-              && routePath2[vrtxIndex] 
+            console.log("FROM: ", routePath1[vertexIndex].name, " TO: ", routePath2[vrtxIndex].name);
+
+            if (routePath1[vertexIndex]
+              && routePath1[vertexIndex].index
+              && routePath2[vrtxIndex]
               && routePath2[vrtxIndex].index) {
               hasLink = !!this.matrixCopy[routePath1[vertexIndex].index][routePath2[vrtxIndex].index];
             }

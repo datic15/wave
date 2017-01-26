@@ -7,7 +7,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import Popover from 'material-ui/Popover/Popover';
 import { Menu, MenuItem } from 'material-ui/Menu';
-import Chart from 'chart.js'
+import Chart from 'chart.js';
+import _ from 'lodash';
 
 // Services
 import CanvasService from "../../../services/CanvasService";
@@ -74,6 +75,7 @@ export default class Settings extends React.Component {
     // CanvasService.drawRouteEndpoints(this.state.vertexFrom, this.state.vertexTo);
 
     this.routesInfo = this.settingsService.showRoutesInfo(this.waResult);
+    this.routesInfoCopy = _.cloneDeep(this.routesInfo);
     this.setState({isRoutesButtonDisabled: false});
   }
 
@@ -85,7 +87,8 @@ export default class Settings extends React.Component {
     console.log(this.bwaResult);
     CanvasService.drawRoutes(this.bwaResult, vertexFrom, vertexTo);
 
-    this.routesInfo = this.settingsService.showRoutesInfo(this.bwaResult);
+    this.routesInfo2 = this.settingsService.showRoutesInfo(this.bwaResult);
+    this.routesInfoCopy = _.cloneDeep(this.routesInfo2);
     this.setState({isRoutesButtonDisabled: false});
   }
 
@@ -126,14 +129,18 @@ export default class Settings extends React.Component {
 
   handleReportsClick = () => {
     let win = window.open("", "Title", "toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1150, height=900, top=0, left=0");
-    win.document.body.innerHTML = "<h1 align='center'>Звіт</h1>";
-    win.document.body.innerHTML += "<h2 align='center'>Знайдені маршрути</h2>";
+    //win.document.body.innerHTML = "<h1 align='center'>Звіт</h1>";
+    win.document.body.innerHTML += "<h2 align='center'>Знайдені маршрути (мод. хвильовий)</h2>";
     this.routesInfo.forEach((route, index) => {
       win.document.body.innerHTML += `<br /> ${index + 1})  ${route.vertices} (${route.weight}) [${route.reliability}]<br />`;
     });
 
-    win.document.body.innerHTML += `<div><img src="${CanvasService.getCanvas().toDataURL("image/png")}" width="950" height="650" /></div> <br />`;
-    win.document.body.innerHTML += `<div align='center'><img src="${this.myLineChart.toBase64Image()}" width="400" height="400" /></div>`;
+    win.document.body.innerHTML += "<h2 align='center'>Знайдені маршрути (зворотної хвилі)</h2>";
+      this.routesInfo2.forEach((route, index) => {
+        win.document.body.innerHTML += `<br /> ${index + 1})  ${route.vertices} (${route.weight}) [${route.reliability}]<br />`;
+      });
+    win.document.body.innerHTML += `<div align='center'><img src="${CanvasService.getCanvas().toDataURL("image/png")}" width="950" height="550" /></div> <br />`;
+    win.document.body.innerHTML += `<div align='center'><img src="${this.myLineChart.toBase64Image()}" width="300" height="300" /></div>`;
     win.window.print();
     // win.window.close();
   }
@@ -285,14 +292,17 @@ export default class Settings extends React.Component {
   }
 
   renderPaths = () => {
-    if(this.routesInfo) {
-      return this.routesInfo.map((route, index) => {
+    if(this.routesInfoCopy) {
+      return this.routesInfoCopy.map((route, index) => {
         let { vertices, weight } = route;
 
         return <MenuItem key={index} primaryText={`${vertices} (${weight}) [${route.reliability}]`} />
       });
     }
+
   }
+
+
 
   renderChart = () => {
     return <canvas id="chart" width="200" height="200"></canvas>;
@@ -370,7 +380,7 @@ export default class Settings extends React.Component {
           <Menu>
             {this.renderPaths()}
           </Menu>
-        </Popover>       
+        </Popover>
 
         <RaisedButton
           onTouchTap={this.handleChartClick}

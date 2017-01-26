@@ -214,8 +214,9 @@ export default class SettingsService {
       };
 
       path.map((vertex, index) => {
-        let { weight, name } = vertex;  
+        let { weight, name } = vertex;
 
+debugger;
         pathInfo.weight += weight;
 
         if(index == path.length - 1) {
@@ -226,7 +227,7 @@ export default class SettingsService {
         else {
           pathInfo.vertices += `${name} - `;
         }
-        
+
       });
 
       return pathInfo;
