@@ -24,7 +24,7 @@ const Root = () => (
   <Provider store={store}>
     <MuiThemeProvider>
       <Router history={browserHistory}>
-        <Route path="/" component={App}>
+        <Route path="wave/" component={App}>
           <IndexRoute component={Home}/>
           <Route path="charts/" component={Charts}/>
           <Route path="reports/" component={Reports}/>
